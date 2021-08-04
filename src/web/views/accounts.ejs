@@ -1,0 +1,127 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">HappyHogBotV2</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="#">ฟาร์ม</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="row justify-content-center align-items-center pt-3">
+    <div class="col-md-10">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between">
+                    <h3>ฟาร์มทั้งหมด</h3>
+                    <button class="btn btn-outline-warning px-5" onclick="showAccount(this, 'add')">เพิ่ม</button>
+                </div>
+                <hr>
+
+                <div class="row">
+                    <%  if (locals.user) {
+                            user.accounts.forEach((account) => {
+                                const accountSettings = account.getSettings()
+                                const userData = account.getUserData()
+                                const missions = JSON.parse(account.missions)
+                                const isMissionCompleted = !missions.find((mission) => !mission.Complete)
+                    %>
+                        <div class="col-md-12">
+                            <div class="card text-dark bg-light mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex flex-row align-items-center">
+                                            <h5 class="card-title mb-0">
+                                                <%= account.name %>
+                                            </h5>
+
+                                            <div class="d-none d-md-block">
+                                                <%- include('./components/account-status-icon.ejs', {account, dayjs, isMissionCompleted, missions}) %>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-row align-items-center">
+                                            <button id="setting-<%= account.id %>" class="btn btn btn-outline-primary mx-2 px-4 d-none d-md-block"
+                                                data-autoFarm="<%=accountSettings.autoFarm%>" 
+                                                data-autoMission="<%=accountSettings.autoMission%>" 
+                                                data-speedMatingMission="<%=accountSettings.speedMatingMission%>" 
+                                                data-autoBuyItem="<%=accountSettings.autoBuyItem%>" 
+                                                data-sellGodPig="<%=accountSettings.sellGodPig%>" 
+                                                data-poisonFarm="<%=accountSettings.poisonFarm%>" 
+                                                data-foodId="<%=accountSettings.foodId%>" 
+                                                data-accountId="<%=account.id%>" 
+                                                onclick="showSetting(this)">ตั้งค่า</button>
+                                            <div class="form-check form-switch mx-2" style="zoom: 1.4;">
+                                                <input class="form-check-input" id="account-status-<%= account.id %>" onchange="changeAccountStatus(this, '<%= account.id %>')" type="checkbox" name="disable-account" <%=account.status ? 'checked':''%> >
+                                            </div>
+                                            <button id="account-log-<%= account.id %>" type="button" class="btn btn-light px-4 collapse-toggle d-none d-md-block" data-bs-toggle="collapse" href="#account-log-<%= account.id %>" aria-expanded="false">
+                                                <i class="fas fa-chevron-down hide-collapsed"></i>
+                                                <i class="fas fa-chevron-up hide-expanded "></i>
+                                            </button>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-light dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('setting-<%= account.id %>').click()">ตั้งค่า</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('account-log-<%= account.id %>').click()">ดู Log</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-accountId="<%= account.id %>" data-name="<%= account.name %>" onclick="showAccount(this, 'edit')">แก้ไข</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="deleteAccount('<%= account.id %>')">ลบ</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="manualCheck('<%= account.id %>', 'food')">เรียกฟังชั่น ให้อาหารทันที</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="manualCheck('<%= account.id %>', 'mission')">เรียกฟังชั่น ทำเควชรายวันทันที</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="manualCheck('<%= account.id %>', 'checkin')">เรียกฟังชั่น เช็คอินรายวัน</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="d-block d-md-none">
+                                        <%- include('./components/account-status-icon.ejs', {account, dayjs, isMissionCompleted, missions}) %>
+                                    </div>
+
+                                    <% if (userData) {%>
+                                        <p class="card-text">
+                                            Lv. <%=userData.user.level%> |
+                                            <%=Number(userData.user.coins).toLocaleString()%> coins |
+                                            <%=Number(userData.user.gems).toLocaleString()%> gems |
+                                            <%=userData.user.pigcount%>/<%=userData.user.maxPig%> pigs
+                                        </p>
+                                    <%}%>
+                                    
+
+                                    <div id="account-log-<%= account.id %>" class="collapse">
+                                        <hr>
+                                        <div class="card text-dark bg-light mb-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <h5 class="card-title">Log</h5>
+                                                    <i class="fa fa-times text-danger" style="cursor: pointer;" onclick="clearLogs('<%= account.id %>')"></i>
+                                                </div>
+                                                <p class="card-text">
+                                                    <pre name="log" data-accountId="<%= account.id %>" style="width: 100%; max-height: 300px;"></pre>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% })} %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./modals/setting.ejs') %>
+<%- include('./modals/account.ejs') %>

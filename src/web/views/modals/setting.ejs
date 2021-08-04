@@ -1,0 +1,73 @@
+<!-- Modal -->
+<div class="modal fade" id="show-setting" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ตั้งค่า</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form 
+                    id="setting-form" 
+                    method="post" 
+                    action="/web/account/setting"
+                >
+                    <input type="hidden" name="accountId" id="accountId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="autoFarm" name="autoFarm" checked>
+                                <label class="form-check-label" for="autoFarm">ให้น้ำ-อาหาร/อาบน้ำ</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="autoMission" name="autoMission" checked>
+                                <label class="form-check-label" for="autoMission">ทำภารกิจอัตโนมัติ</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="speedMatingMission" name="speedMatingMission" checked>
+                                <label class="form-check-label" for="speedMatingMission">ใช้ยาเร่งคลอด</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="autoBuyItem" name="autoBuyItem" checked>
+                                <label class="form-check-label" for="autoBuyItem">ซื้อไอเทมออโต้</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="sellGodPig" name="sellGodPig" checked>
+                                <label class="form-check-label" for="sellGodPig">ขายหมูอมตะ (ภารกิจผสมพันธ์)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-4">
+                            <div class="mb-3">
+                                <label class="form-label">ฟาร์มที่จะวางยาง</label>
+                                <input type="text" class="form-control" id="poisonFarm" name="poisonFarm" placeholder="1375025966227603">
+                              </div>
+                        </div>
+                        <div class="col-md-6 mt-4">
+                            <div class="mb-3">
+                                <label class="form-label">อาหาร</label>
+                                <select class="form-select" name="foodId" id="foodId">
+                                    <option value="3">ผักกาด</option>
+                                    <option value="4">ผักรวม</option>
+                                    <option value="2">ไอติม</option>
+                                    <option value="0">เบอร์เกอร์</option>
+                                  </select>
+                              </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="submit" type="submit" class="btn btn-primary" onclick="submit(this, 'setting-form')">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

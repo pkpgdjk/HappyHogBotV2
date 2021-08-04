@@ -21,6 +21,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     LogModule,
     UtilityModule
   ],
-  providers: [SchedulerService]
+  providers: [SchedulerService],
+  exports: [SchedulerService]
 })
 export class SchedulerModule {}

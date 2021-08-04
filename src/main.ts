@@ -5,24 +5,48 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import * as utc from 'dayjs/plugin/utc'
+import * as timezone from 'dayjs/plugin/timezone'
+import * as isToday from 'dayjs/plugin/isToday'
+import * as dayjs from 'dayjs'
+import secureSession from 'fastify-secure-session';
 
 async function bootstrap() {
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(isToday)
+dayjs.tz.setDefault("America/New_York")
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({ logger: false }),
   );
   app.useStaticAssets({
-    root: join(__dirname, '..', 'public'),
+    root: join(__dirname, 'web', 'public'),
     prefix: '/public/',
   });
   app.setViewEngine({
     engine: {
-      handlebars: require('handlebars'),
+      ejs: require('ejs')
     },
-    templates: join(__dirname, '..', 'views'),
+    layout: "./layouts/main",
+    includeViewExtension: true,
+    templates: join(__dirname, './web', 'views'),
+  });
+
+  app.register(secureSession, {
+    secret: 'averylogphrasebiggerthanthirtytwochars',
+    salt: 'mq9hDxBVDbspDR6n',
+    cookie: {
+      path: '/',
+      httpOnly: true // Use httpOnly for all production purposes
+      // options for setCookie, see https://github.com/fastify/fastify-cookie
+    }
   });
 
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000, '0.0.0.0')
+  console.log(`server is running on ${await app.getUrl()}`)
 }
 bootstrap();

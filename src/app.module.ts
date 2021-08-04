@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WebModule } from './web/web.module';
@@ -15,15 +15,11 @@ import database from './config/database';
 import { BotService } from './bot/services/bot/bot.service';
 import { SchedulerModule } from './scheduler/scheduler.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import * as utc from 'dayjs/plugin/utc'
-import * as timezone from 'dayjs/plugin/timezone'
-import * as dayjs from 'dayjs'
 import { UtilityService } from './utility/utility/utility.service';
 import { LogService } from './log/log/log.service';
 import { FacebookService } from './bot/services/facebook/facebook.service';
-dayjs.extend(utc)
-dayjs.extend(timezone)
-dayjs.tz.setDefault("America/New_York")
+import { AuthMiddleware, logger } from './web/middlewares/auth.middleware';
+import { WebService } from './web/services/web/web.service';
 
 
 @Module({
@@ -44,4 +40,10 @@ dayjs.tz.setDefault("America/New_York")
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes("web");
+  }
+}

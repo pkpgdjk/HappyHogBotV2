@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { map } from 'rxjs';
-import { LoginException } from 'src/exception/http/bot/login.exception';
+import { LoginException } from 'src/exception/bot/login.exception';
 import { GameFarmInfo } from '../../interface/gameFarmInfo';
 import { GameUserInfo } from '../../interface/gameUserInfo';
 import { AccountUserData } from '../../../class/account-user-data.class';

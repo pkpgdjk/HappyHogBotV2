@@ -1,0 +1,13 @@
+<i class="fas fa-sign-in-alt text-<%= account.loginStatus ? 'success': 'danger' %> mx-1"></i>
+<i class="fas fa-calendar-check text-<%= account.isCheckedIn ? 'success': 'danger' %> mx-1" 
+    data-bs-toggle="tooltip"
+    data-bs-html="true" title="<%= dayjs.tz(account.checkinAt).format('YYYY-MM-DD HH:mm:ss')  %>"></i>
+<i class="fas fa-question-circle text-<%= isMissionCompleted ? 'success': 'warning' %> mx-1" data-bs-toggle="tooltip"
+    data-bs-html="true" title="
+    <% missions.forEach((m) => { %>
+        <%= `<b class="text-${m.Complete ? 'success': 'danger'}">${m.Name} 1 (${m.Point}/${m.MaxPoint})</b> <br>`%>
+    <% }) %>
+"></i>
+
+<i class="fas fa-exclamation-circle text-danger mx-1" data-bs-toggle="tooltip"
+    data-bs-html="true" title="alert 1 <br> alert 2"></i>

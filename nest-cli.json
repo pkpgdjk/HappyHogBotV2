@@ -2,7 +2,7 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": ["web/public/**/*.*","**/*.ejs"],
+    "assets": ["web/public/**/*.*","**/*.ejs", "web/views/**/*.*"],
     "watchAssets": true
   }
 }

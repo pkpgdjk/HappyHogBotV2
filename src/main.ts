@@ -14,7 +14,7 @@ async function bootstrap() {
   dayjs.extend(isToday);
   dayjs.tz.setDefault('America/New_York');
 
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({ logger: true }));
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({ logger: false }));
   app.useStaticAssets({
     root: join(__dirname, 'web', 'public'),
     prefix: '/public/',

@@ -17,6 +17,8 @@ import {
   Put,
   Delete,
   Param,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import * as secureSession from 'fastify-secure-session';
 import { FastifyRequest, FastifyReply } from 'fastify';
@@ -30,15 +32,11 @@ import { AccountDto } from '../dto/account.dto';
 
 @Controller('web')
 export class WebController {
-  constructor(private webService: WebService) {}
+  constructor(private webService: WebService, private schedulerService: SchedulerService) {}
 
   @Get('/login')
   @Render('login')
-  getLoginPage(
-    @Session() session: secureSession.Session,
-    @Req() req: FastifyRequest,
-    @Res() res,
-  ) {
+  getLoginPage(@Session() session: secureSession.Session, @Req() req: FastifyRequest, @Res() res) {
     if (session.get('userId')) {
       res.redirect(302, '/web/accounts');
     } else {
@@ -47,15 +45,8 @@ export class WebController {
   }
 
   @Post('/login')
-  async login(
-    @Session() session: secureSession.Session,
-    @Res() res,
-    @Body() loginDto: LoginDto,
-  ) {
-    const user = await this.webService.login(
-      loginDto.username,
-      loginDto.password,
-    );
+  async login(@Session() session: secureSession.Session, @Res() res, @Body() loginDto: LoginDto) {
+    const user = await this.webService.login(loginDto.username, loginDto.password);
     if (user) {
       session.set('userId', user.id);
       res.redirect(302, '/web/accounts');
@@ -74,11 +65,7 @@ export class WebController {
   }
 
   @Get('/accounts')
-  async accounts(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @UserId() userId?: string,
-  ) {
+  async accounts(@Res() req: FastifyRequest, @Res() res, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
@@ -88,50 +75,29 @@ export class WebController {
   }
 
   @Post('/account')
-  async account(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Body() accountDto: AccountDto,
-    @UserId() userId?: string,
-  ) {
+  async account(@Res() req: FastifyRequest, @Res() res, @Body() accountDto: AccountDto, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
     }
 
-    const account = await this.webService.createOrUpdateAccount(
-      accountDto,
-      userId,
-    );
+    const account = await this.webService.createOrUpdateAccount(accountDto, userId);
     res.redirect(302, '/web/accounts');
   }
 
   @Delete('/api/account/:accountId')
-  async deleteAccount(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Param('accountId') accountId: string,
-    @UserId() userId?: string,
-  ) {
+  async deleteAccount(@Res() req: FastifyRequest, @Res() res, @Param('accountId') accountId: string, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
     }
 
     const logs = await this.webService.deleteAccount(accountId);
-    res
-      .code(200)
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send({});
+    res.code(200).header('Content-Type', 'application/json; charset=utf-8').send({});
   }
 
   @Post('/account/setting')
-  async setting(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Body() settingDto: SettingDto,
-    @UserId() userId?: string,
-  ) {
+  async setting(@Res() req: FastifyRequest, @Res() res, @Body() settingDto: SettingDto, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
@@ -142,12 +108,7 @@ export class WebController {
   }
 
   @Get('/api/account/:accountId/log')
-  async getLog(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Param('accountId') accountId: string,
-    @UserId() userId?: string,
-  ) {
+  async getLog(@Res() req: FastifyRequest, @Res() res, @Param('accountId') accountId: string, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
@@ -160,88 +121,54 @@ export class WebController {
       .send(
         logs
           .map((log) => {
-            return `${dayjs.tz(log.createdAt).format('YYYY-MM-DD HH:mm:ss')} ${
-              log.message
-            }`;
+            return `${dayjs.tz(log.createdAt).format('YYYY-MM-DD HH:mm:ss')} ${log.message}`;
           })
           .join('\n'),
       );
   }
 
   @Delete('/api/account/:accountId/log')
-  async clearLog(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Param('accountId') accountId: string,
-    @UserId() userId?: string,
-  ) {
+  async clearLog(@Res() req: FastifyRequest, @Res() res, @Param('accountId') accountId: string, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
     }
 
     const logs = await this.webService.clearLog(accountId);
-    res
-      .code(200)
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send({});
+    res.code(200).header('Content-Type', 'application/json; charset=utf-8').send({});
   }
 
   @Post('/api/account/:accountId/check-food')
-  async checkFood(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Param('accountId') accountId: string,
-    @UserId() userId?: string,
-  ) {
+  async checkFood(@Res() req: FastifyRequest, @Res() res, @Param('accountId') accountId: string, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
     }
 
     this.webService.checkFood(accountId);
-    res
-      .code(200)
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send({});
+    res.code(200).header('Content-Type', 'application/json; charset=utf-8').send({});
   }
 
   @Post('/api/account/:accountId/check-mission')
-  async checkMission(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Param('accountId') accountId: string,
-    @UserId() userId?: string,
-  ) {
+  async checkMission(@Res() req: FastifyRequest, @Res() res, @Param('accountId') accountId: string, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
     }
 
     this.webService.checkMission(accountId);
-    res
-      .code(200)
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send({});
+    res.code(200).header('Content-Type', 'application/json; charset=utf-8').send({});
   }
 
   @Post('/api/account/:accountId/check-checkin')
-  async checkCheckIn(
-    @Res() req: FastifyRequest,
-    @Res() res,
-    @Param('accountId') accountId: string,
-    @UserId() userId?: string,
-  ) {
+  async checkCheckIn(@Res() req: FastifyRequest, @Res() res, @Param('accountId') accountId: string, @UserId() userId?: string) {
     const user = await this.webService.getUserById(userId);
     if (!user) {
       res.redirect(302, '/web/login');
     }
 
     this.webService.checkCheckIn(accountId);
-    res
-      .code(200)
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send({});
+    res.code(200).header('Content-Type', 'application/json; charset=utf-8').send({});
   }
 
   @Put('/api/account/:accountId/status')
@@ -258,9 +185,28 @@ export class WebController {
     }
 
     await this.webService.updateStatus(accountId, status);
-    res
-      .code(200)
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send({});
+    res.code(200).header('Content-Type', 'application/json; charset=utf-8').send({});
+  }
+
+  @Get('/api/cron/:cronType')
+  async checkCron(@Res() req: FastifyRequest, @Res() res, @Param('cronType') cronType: string) {
+    switch (cronType) {
+      case 'food': {
+        this.schedulerService.feedFood();
+        break;
+      }
+      case 'mission': {
+        this.schedulerService.doDiaryMission();
+        break;
+      }
+      case 'checkin': {
+        this.schedulerService.diaryCheckIn();
+        break;
+      }
+      default: {
+        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+      }
+    }
+    res.code(200).header('Content-Type', 'application/json; charset=utf-8').send({});
   }
 }

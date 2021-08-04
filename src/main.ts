@@ -12,7 +12,7 @@ async function bootstrap() {
   dayjs.extend(utc);
   dayjs.extend(timezone);
   dayjs.extend(isToday);
-  dayjs.tz.setDefault('America/New_York');
+  dayjs.tz.setDefault(process.env.TZ || 'Asia/Bangkok');
 
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({ logger: false }));
   app.useStaticAssets({

@@ -38,5 +38,6 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@main
         with:
           service: ${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}
+          region: asia-southeast1
           image: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}@${{ steps.docker_build.outputs.digest }}
           credentials: ${{ secrets.GCP_SA_CRED }} 

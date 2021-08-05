@@ -32,15 +32,17 @@ export class FacebookService {
       console.log('getFbTokenByCookie goto', await page.url());
 
       await page.waitForSelector('[name="__CONFIRM__"]');
-      await page.click('[name="__CONFIRM__"]');
+
       let token: string = '';
-      await page.waitForResponse((response) => {
+      page.waitForResponse((response) => {
         let redirect_uri = response.headers()?.location;
         let extracts = /access_token=(.*?)&/.exec(redirect_uri);
         let t = extracts?.[1];
         token = t;
         return !!t;
       });
+
+      await page.click('[name="__CONFIRM__"]');
       await browser.close();
 
       console.log('getFbTokenByCookie token', token);

@@ -32,7 +32,10 @@ COPY yarn.lock ./
 COPY . .
 
 COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/node_modules ./node_modules
+# COPY --from=builder /usr/src/app/node_modules ./node_modules
+
+RUN yarn install --frozen-lockfile
+
 
 RUN  apt-get update \
      && apt-get install -y wget gnupg ca-certificates procps libxss1 \
@@ -51,7 +54,6 @@ RUN  apt-get update \
 
 # RUN npm install --only=development
 # RUN npm ci --only=production
-# RUN yarn install --frozen-lockfile
 
 EXPOSE 4000
 

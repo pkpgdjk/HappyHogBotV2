@@ -26,10 +26,17 @@ jobs:
         with:
           file: Dockerfile
           push: true
-          tags: asia.gcr.io/happy-hog-bot-v2/happy-hog-bot-v2:latest
+          tags: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}:latest
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          service: happy-hog-bot-v2
-          image: asia.gcr.io/happy-hog-bot-v2/happy-hog-bot-v2@${{ steps.docker_build.outputs.digest }}
+          service: ${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}
+          image: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}@${{ steps.docker_build.outputs.digest }}
           credentials: ${{ secrets.GCP_SA_CRED }} 

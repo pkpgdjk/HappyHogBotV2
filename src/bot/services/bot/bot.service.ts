@@ -132,7 +132,6 @@ export class BotService {
       this.logService.alert(`เกิดข้อผิดพลาดในการเลี้ยงหมู ${err?.message}`, account);
       throw err;
     } finally {
-      this.logService.save();
     }
   }
 
@@ -382,7 +381,6 @@ export class BotService {
     } finally {
       let missions = (await this.gameService.getDiaryMission(account))?.List;
       account.missions = JSON.stringify(missions);
-      this.logService.save();
     }
   }
 
@@ -405,7 +403,6 @@ export class BotService {
       this.logService.alert(`เกิดข้อผิดพลาดในการเช็คอิน ${err?.message}`, account);
       throw err;
     } finally {
-      this.logService.save();
     }
   }
 

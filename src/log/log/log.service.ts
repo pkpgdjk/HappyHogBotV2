@@ -21,7 +21,7 @@ export class LogService {
     log.message = msg;
     log.account = account;
     log.createdAt = date.toDate();
-    this.pushLog(log);
+    this.logsRepository.save(log);
     console.log(`[${account.name}]`, date.format('DD/MM/YYYY HH:mm:ss'), msg);
   }
 
@@ -32,23 +32,7 @@ export class LogService {
     log.type = LogType.ALERT;
     log.account = account;
     log.createdAt = date.toDate();
-    this.pushLog(log);
+    this.logsRepository.save(log);
     console.warn(`[${account.name}]`, date.format('DD/MM/YYYY HH:mm:ss'), msg);
-  }
-
-  private pushLog(log: Log) {
-    this.logs.push(log);
-    if (this.logs.length >= 5 || this.lastSaved.add(30, 'seconds') < dayjs()) {
-      this.logsRepository.save(this.logs);
-      console.log(`pushed ${this.logs.length} logs`);
-      this.lastSaved = dayjs();
-      this.logs = [];
-    }
-  }
-
-  public async save() {
-    this.logsRepository.save(this.logs);
-    this.lastSaved = dayjs();
-    this.logs = [];
   }
 }

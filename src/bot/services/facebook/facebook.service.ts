@@ -29,6 +29,8 @@ export class FacebookService {
         { waitUntil: 'networkidle2' },
       );
 
+      console.log('getFbTokenByCookie goto', await page.url());
+
       await page.waitForSelector('[name="__CONFIRM__"]');
       await page.click('[name="__CONFIRM__"]');
       let token: string = '';

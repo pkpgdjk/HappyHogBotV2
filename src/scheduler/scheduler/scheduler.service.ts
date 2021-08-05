@@ -46,7 +46,6 @@ export class SchedulerService {
         }
       } finally {
         this.accountsRepository.save(account);
-        this.logService.save();
       }
     }
   }
@@ -82,7 +81,6 @@ export class SchedulerService {
         }
       } finally {
         this.accountsRepository.save(account);
-        this.logService.save();
       }
     }
   }
@@ -118,7 +116,6 @@ export class SchedulerService {
         }
       } finally {
         this.accountsRepository.save(account);
-        this.logService.save();
       }
     }
   }

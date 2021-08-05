@@ -5,7 +5,10 @@ import * as puppeteer from 'puppeteer';
 export class FacebookService {
   public async getFbTokenByCookie(cookie: any[]): Promise<string> {
     try {
-      const browser = await puppeteer.launch({ headless: true });
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox'],
+      });
       const page = await browser.newPage();
 
       await page.setCookie(...cookie);

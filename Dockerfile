@@ -1,4 +1,4 @@
-FROM node:14-slim AS builder
+FROM node:12-slim AS builder
 
 WORKDIR /usr/src/app
 
@@ -19,7 +19,7 @@ COPY . .
 
 RUN yarn run build
 
-FROM node:14-slim as production
+FROM node:12-slim as production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}

@@ -7,7 +7,8 @@ export class FacebookService {
     try {
       const browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox'],
+        args: ['--disable-gpu', '--no-sandbox'],
+        executablePath: 'google-chrome',
       });
       const page = await browser.newPage();
 

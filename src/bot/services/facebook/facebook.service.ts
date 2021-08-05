@@ -5,6 +5,10 @@ import * as puppeteer from 'puppeteer';
 export class FacebookService {
   public async getFbTokenByCookie(cookie: any[]): Promise<string> {
     try {
+      //         const browserFetcher = puppeteer.createBrowserFetcher();
+      // const revisionInfo = await browserFetcher.download('884014');
+      // const browser = await puppeteer.launch({executablePath: revisionInfo.executablePath})
+
       const browser = await puppeteer.launch({
         headless: true,
         args: ['--disable-gpu', '--no-sandbox'],

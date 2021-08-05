@@ -16,7 +16,7 @@ export class SchedulerService {
     private logService: LogService,
   ) {}
 
-  @Interval(30 * 60 * 1000)
+  // @Interval(30 * 60 * 1000)
   // @Timeout(1000)
   public async feedFood(accounts?: Account[]) {
     if (!accounts) {
@@ -51,7 +51,7 @@ export class SchedulerService {
     }
   }
 
-  @Interval(4 * 60 * 60 * 1000)
+  // @Interval(4 * 60 * 60 * 1000)
   // @Timeout(1000)
   public async doDiaryMission(accounts?: Account[]) {
     if (!accounts) {
@@ -87,7 +87,7 @@ export class SchedulerService {
     }
   }
 
-  @Interval(8 * 60 * 60 * 1000)
+  // @Interval(8 * 60 * 60 * 1000)
   // @Timeout(1000)
   public async diaryCheckIn(accounts?: Account[]) {
     if (!accounts) {

@@ -29,6 +29,7 @@ export class SchedulerService {
     for (let i = 0; i < accounts.length; i++) {
       let account = accounts[i];
       try {
+        this.logService.log('---- เริ่มการดูแลหมู ----', account);
         account = await this.botService.loginIntoAccount(account);
         if (account.loginStatus) {
           await this.botService.checkFood(account);
@@ -45,6 +46,7 @@ export class SchedulerService {
           this.logService.log(error.message, account);
         }
       } finally {
+        this.logService.log('---- การดูแลหมูเสร็จสิ้น ----', account);
         this.accountsRepository.save(account);
       }
     }
@@ -63,6 +65,8 @@ export class SchedulerService {
     for (let i = 0; i < accounts.length; i++) {
       let account = accounts[i];
       try {
+        this.logService.log('---- เริ่มการทำภารกิจรายวัน ----', account);
+
         account = await this.botService.loginIntoAccount(account);
         if (account.loginStatus) {
           await this.botService.checkDiaryMission(account);
@@ -80,6 +84,7 @@ export class SchedulerService {
           this.logService.log(error.message, account);
         }
       } finally {
+        this.logService.log('---- จบการทำภารกิจรายวัน ----', account);
         this.accountsRepository.save(account);
       }
     }
@@ -98,6 +103,7 @@ export class SchedulerService {
     for (let i = 0; i < accounts.length; i++) {
       let account = accounts[i];
       try {
+        this.logService.log('---- เริ่มการเช็คอินรายวัน ----', account);
         account = await this.botService.loginIntoAccount(account);
         if (account.loginStatus) {
           await this.botService.dailyCheckIn(account);
@@ -115,6 +121,7 @@ export class SchedulerService {
           this.logService.log(error.message, account);
         }
       } finally {
+        this.logService.log('---- จบการเช็คอินรายวัน ----', account);
         this.accountsRepository.save(account);
       }
     }

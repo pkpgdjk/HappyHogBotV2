@@ -37,7 +37,12 @@ export class WebService {
   public async createUser(user: User): Promise<void> {}
 
   public async getUserById(userId: string): Promise<User> {
-    let user = await this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.accounts', 'accounts').orderBy('accounts.createdAt').getOne();
+    let user = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.accounts', 'accounts')
+      .where('user.id = :userId', { userId: userId })
+      .orderBy('accounts.createdAt')
+      .getOne();
     return user;
   }
 

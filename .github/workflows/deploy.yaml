@@ -1,43 +1,43 @@
-name: Deploy to Google Cloud Run
-on:
-  push:
-    branches:
-      - main
+# name: Deploy to Google Cloud Run
+# on:
+#   push:
+#     branches:
+#       - main
       
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ 12.x ]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to Google Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: asia.gcr.io
-          username: _json_key
-          password: ${{ secrets.GCP_SA_CRED }}
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          file: Dockerfile
-          push: true
-          tags: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}:latest
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node-version: [ 12.x ]
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v1
+#       - name: Login to Google Container Registry
+#         uses: docker/login-action@v1
+#         with:
+#           registry: asia.gcr.io
+#           username: _json_key
+#           password: ${{ secrets.GCP_SA_CRED }}
+#       - name: Build and push
+#         id: docker_build
+#         uses: docker/build-push-action@v2
+#         with:
+#           file: Dockerfile
+#           push: true
+#           tags: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}:latest
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@main
-        with:
-          service: ${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}
-          region: asia-southeast1
-          image: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}@${{ steps.docker_build.outputs.digest }}
-          credentials: ${{ secrets.GCP_SA_CRED }} 
+#       - name: Set up Cloud SDK
+#         uses: google-github-actions/setup-gcloud@master
+#         with:
+#           project_id: ${{ secrets.GCP_PROJECT_ID }}
+#           service_account_key: ${{ secrets.GCP_SA_KEY }}
+#           export_default_credentials: true
+#       - name: Deploy to Cloud Run
+#         uses: google-github-actions/deploy-cloudrun@main
+#         with:
+#           service: ${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}
+#           region: asia-southeast1
+#           image: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }}@${{ steps.docker_build.outputs.digest }}
+#           credentials: ${{ secrets.GCP_SA_CRED }} 

@@ -73,7 +73,7 @@
                                                     <li><a class="dropdown-item" href="#" onclick="document.getElementById('setting-<%= account.id %>').click()">ตั้งค่า</a></li>
                                                     <li><a class="dropdown-item" href="#" onclick="document.getElementById('account-log-<%= account.id %>').click()">ดู Log</a></li>
                                                     <li><a class="dropdown-item" href="#" data-accountId="<%= account.id %>" data-name="<%= account.name %>" onclick="showAccount(this, 'edit')">แก้ไข</a></li>
-                                                    <li><a class="dropdown-item" href="#" onclick="deleteAccount('<%= account.id %>')">ลบ</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="confirm('ลบ Account นี้?',()=>{deleteAccount('<%= account.id %>')})">ลบ</a></li>
                                                     <li><hr class="dropdown-divider"></li>
                                                     <li><a class="dropdown-item" href="#" onclick="manualCheck('<%= account.id %>', 'food')">เรียกฟังชั่น ให้อาหารทันที</a></li>
                                                     <li><a class="dropdown-item" href="#" onclick="manualCheck('<%= account.id %>', 'mission')">เรียกฟังชั่น ทำเควชรายวันทันที</a></li>

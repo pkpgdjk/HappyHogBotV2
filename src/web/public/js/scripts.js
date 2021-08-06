@@ -19,9 +19,7 @@ const changeAccountStatus = (el, id) => {
 };
 
 const manualCheck = (accountId, type) => {
-  fetch(`/web/api/account/${accountId}/check-${type}`, { method: 'POST' }).then(
-    (res) => {},
-  );
+  fetch(`/web/api/account/${accountId}/check-${type}`, { method: 'POST' }).then((res) => {});
 };
 
 const deleteAccount = (accountId) => {
@@ -43,12 +41,10 @@ const loadLogs = () => {
 };
 
 const clearLogs = (accountId) => {
-  fetch(`/web/api/account/${accountId}/log`, { method: 'DELETE' }).then(
-    (res) => {
-      loadLogs();
-      alert(`ลบ log เรียบร้อยแล้ว`);
-    },
-  );
+  fetch(`/web/api/account/${accountId}/log`, { method: 'DELETE' }).then((res) => {
+    loadLogs();
+    alert(`ลบ log เรียบร้อยแล้ว`);
+  });
 };
 
 setInterval(loadLogs, 3000);
@@ -95,21 +91,14 @@ const submit = (el, id) => {
 
 var modalSetting = document.getElementById('show-setting');
 modalSetting.addEventListener('show.bs.modal', function (event) {
-  document.querySelector('#show-setting #autoFarm').checked =
-    settingData.autoFarm;
-  document.querySelector('#show-setting #autoMission').checked =
-    settingData.autoMission;
-  document.querySelector('#show-setting #speedMatingMission').checked =
-    settingData.speedMatingMission;
-  document.querySelector('#show-setting #autoBuyItem').checked =
-    settingData.autoBuyItem;
-  document.querySelector('#show-setting #sellGodPig').checked =
-    settingData.sellGodPig;
-  document.querySelector('#show-setting #poisonFarm').value =
-    settingData.poisonFarm;
+  document.querySelector('#show-setting #autoFarm').checked = settingData.autoFarm;
+  document.querySelector('#show-setting #autoMission').checked = settingData.autoMission;
+  document.querySelector('#show-setting #speedMatingMission').checked = settingData.speedMatingMission;
+  document.querySelector('#show-setting #autoBuyItem').checked = settingData.autoBuyItem;
+  document.querySelector('#show-setting #sellGodPig').checked = settingData.sellGodPig;
+  document.querySelector('#show-setting #poisonFarm').value = settingData.poisonFarm;
   document.querySelector('#show-setting #foodId').value = settingData.foodId;
-  document.querySelector('#show-setting #accountId').value =
-    settingData.accountId;
+  document.querySelector('#show-setting #accountId').value = settingData.accountId;
 });
 
 modalSetting.addEventListener('hidden.bs.modal', function (event) {
@@ -120,11 +109,52 @@ modalSetting.addEventListener('hidden.bs.modal', function (event) {
 var modalAccount = document.getElementById('show-account');
 modalAccount.addEventListener('show.bs.modal', function (event) {
   document.querySelector('#show-account #name').value = accountData.name || '';
-  document.querySelector('#show-account #accountId').value =
-    accountData.accountId || '';
+  document.querySelector('#show-account #accountId').value = accountData.accountId || '';
 });
 
 modalAccount.addEventListener('hidden.bs.modal', function (event) {
   accountData = {};
   document.querySelector('#show-account #submit').removeAttribute('disabled');
 });
+
+var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+  return new bootstrap.Popover(popoverTriggerEl);
+});
+
+function confirm(header, callback, options = {}) {
+  var confirmModal = $(
+    '<div class="modal fade">' +
+      '<div class="modal-dialog">' +
+      '<div class="modal-content">' +
+      '<div class="modal-header">' +
+      '<h5 class="modal-title" >' +
+      header +
+      '</h5>' +
+      '        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>      ' +
+      '</div>' +
+      '<div class="modal-body">' +
+      '<p>' +
+      (options.content || '') +
+      '</p>' +
+      '</div>' +
+      '<div class="modal-footer">' +
+      '<a href="#!" class="btn" data-dismiss="modal">' +
+      (options.cancelButtonTxt || 'ยกเลิก') +
+      '</a>' +
+      '<a href="#!" id="okButton" class="btn btn-primary">' +
+      (options.okButtonTxt || 'ตกลง') +
+      '</a>' +
+      '</div>' +
+      '</div>' +
+      '</div>' +
+      '</div>',
+  );
+
+  confirmModal.find('#okButton').click(function (event) {
+    callback();
+    confirmModal.modal('hide');
+  });
+
+  confirmModal.modal('show');
+}

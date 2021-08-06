@@ -403,6 +403,9 @@ export class BotService {
         account.checkinAt = dayjs.tz(new Date()).toDate();
       }
     } catch (err) {
+      if (err.response?.status == 429) {
+        account.checkinAt = dayjs.tz(new Date()).toDate();
+      }
       this.logService.alert(`เกิดข้อผิดพลาดในการเช็คอิน ${err?.message}`, account);
       throw err;
     } finally {

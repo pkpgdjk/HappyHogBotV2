@@ -207,7 +207,7 @@ export class BotService {
               await this.gameService.mating(account, female.Id, male.Id);
               await this.utility.sleep(2000);
 
-              if (account.getSettings().speedMatingMission) {
+              if (account.getSettings().speedMatingMission || mission.Desc == 'SPEED_POTION_MISSION') {
                 // check potion and buy more
                 let speedPotion = inventory.find((i) => i.Itemid == 11 && i.Itemtype == 1 && i.Itemoption == 5);
                 if (!speedPotion || speedPotion.Quantity < 2) {
@@ -237,6 +237,8 @@ export class BotService {
                 setTimeout(async () => {
                   await this.utility.retryPromise(this.sellNewLittlePig(account), 3, 1000);
                 }, 6 * 60 * 60 * 1000 + 5 * 60 * 1000); // 6hr 5 min
+                let callbackTime = dayjs.tz(new Date()).add(6, 'h').add(5, 'm').format('YYYY-MM-DD HH:mm:ss');
+                this.logService.log(`ผสมพันธ์สำเร็จ รอคลอด ` + callbackTime, account);
               }
 
               this.logService.log(`ผสมพันธ์สำเร็จ`, account);

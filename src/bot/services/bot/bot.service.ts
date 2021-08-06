@@ -25,18 +25,21 @@ export class BotService {
       let gameCookie = '';
       let fbToken = account.fbToken;
       if (fbToken) {
+        let isValidToken = this.facebookService.validateToken(fbToken);
         try {
           this.logService.log('กำลัง login เข้าเกม ด้วย fb-token เก่า', account);
-          gameCookie = await this.gameService.login(account.fbToken);
+          gameCookie = await this.utility.retryPromise(this.gameService.login(account.fbToken), 5, 1000);
         } catch (error) {
-          account.fbToken = '';
+          if (!isValidToken) {
+            account.fbToken = '';
+          }
         }
       }
 
       if (!gameCookie) {
         this.logService.log('กำลังดึง fb token ใหม่', account);
         const cookie = JSON.parse(account.fbCookie);
-        fbToken = await this.facebookService.getFbTokenByCookie(cookie);
+        fbToken = await this.utility.retryPromise(this.facebookService.getFbTokenByCookie(cookie), 5, 1000);
         account.fbToken = fbToken;
 
         this.logService.log('กำลัง login เข้าเกม ด้วย fb-token ใหม่', account);

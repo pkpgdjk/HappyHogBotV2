@@ -1,8 +1,11 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class FacebookService {
+  constructor(private httpService: HttpService) {}
+
   public async getFbTokenByCookie(cookie: any[]): Promise<string> {
     try {
       //         const browserFetcher = puppeteer.createBrowserFetcher();
@@ -34,7 +37,7 @@ export class FacebookService {
       await page.waitForSelector('[name="__CONFIRM__"]');
 
       let token: string = '';
-      page.waitForResponse((response) => {
+      let waitForToken = page.waitForResponse((response) => {
         let redirect_uri = response.headers()?.location;
         let extracts = /access_token=(.*?)&/.exec(redirect_uri);
         let t = extracts?.[1];
@@ -43,6 +46,7 @@ export class FacebookService {
       });
 
       await page.click('[name="__CONFIRM__"]');
+      await waitForToken;
       await browser.close();
 
       console.log('getFbTokenByCookie token', token);
@@ -50,6 +54,16 @@ export class FacebookService {
     } catch (error) {
       console.log('getFbTokenByCookie', error);
       throw error;
+    }
+  }
+
+  public async validateToken(token: string): Promise<boolean> {
+    try {
+      let res = await this.httpService.get(`https://graph.facebook.com/me?access_token=${token}`).toPromise();
+      console.log('validateToken', res.data);
+      return true;
+    } catch (err) {
+      return false;
     }
   }
 }
